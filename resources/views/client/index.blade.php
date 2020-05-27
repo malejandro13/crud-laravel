@@ -4,6 +4,8 @@
 
 @section('content')
     <h1>view Client - Method index</h1>
+
+    @include('partials.alert')
     
     <a href="{{ route('clients.create') }}" class="btn btn-success">Crear</a>
 

@@ -37,7 +37,15 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
-        return $request->all();
+        $fields = $request->validate([
+            'email' => 'required|email|max:50|confirmed|unique:clients',
+            'name' => 'required|string|max:50',
+            'birthday' => 'required|date|before:tomorrow',
+        ]);
+
+        Client::create($fields);
+
+        return redirect()->route('clients.index')->with('status', 'Su registro fue realizado satisfactoriamente');
     }
 
     /**
