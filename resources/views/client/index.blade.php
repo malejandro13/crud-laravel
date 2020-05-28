@@ -16,6 +16,8 @@
             <th scope="col">Email</th>
             <th scope="col">Name</th>
             <th scope="col">Birthday</th>
+            <th scope="col">Ver</th>
+            <th scope="col">Editar</th>
           </tr>
         </thead>
         <tbody>
@@ -25,6 +27,8 @@
             <td>{{ $client->email }}</td>
             <td>{{ $client->name }}</td>
             <td>{{ $client->birthday }}</td>
+            <td><a href="{{ route('clients.show', $client) }}" class="btn btn-primary">Ver</a></td>
+            <td><a href="{{ route('clients.edit', $client) }}" class="btn btn-warning">Editar</a></td>
           </tr>
           @endforeach
         </tbody>

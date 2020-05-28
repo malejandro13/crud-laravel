@@ -56,7 +56,9 @@ class ClientController extends Controller
      */
     public function show(Client $client)
     {
-        //
+        return view('client.show', [
+            'client' => $client
+        ]);
     }
 
     /**
@@ -67,7 +69,9 @@ class ClientController extends Controller
      */
     public function edit(Client $client)
     {
-        //
+        return view('client.edit', [
+            'client' => $client,
+        ]);
     }
 
     /**
@@ -79,7 +83,21 @@ class ClientController extends Controller
      */
     public function update(Request $request, Client $client)
     {
-        //
+        $fields = $request->validate([
+            'email' => 'required|email|max:50|confirmed|unique:clients,email,'.$client->id,
+            'name' => 'required|string|max:50',
+            'birthday' => 'required|date|before:tomorrow',
+        ]);
+
+        $client->fill($fields);
+
+        if($client->isClean()) {
+            return redirect()->route('clients.index')->with('status', 'Su registro no fue necesario actualizarlo');
+        }
+
+        $client->save();
+        
+        return redirect()->route('clients.index')->with('status', 'Su registro fue actualizado satisfactoriamente');
     }
 
     /**
