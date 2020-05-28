@@ -17,7 +17,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/clients', 'ClientController@index')->name('clients.index');
+/*Route::get('/clients', 'ClientController@index')->name('clients.index');
 
 Route::get('/clients/create', 'ClientController@create')->name('clients.create');
 
@@ -29,5 +29,7 @@ Route::get('/clients/{client:email}/edit', 'ClientController@edit')->name('clien
 
 Route::patch('/clients/{client:email}', 'ClientController@update')->name('clients.update');
 
-Route::delete('/clients/{client:email}', 'ClientController@destroy')->name('clients.destroy');
+Route::delete('/clients/{client:email}', 'ClientController@destroy')->name('clients.destroy');*/
+
+Route::resource('/clients', 'ClientController');
 
