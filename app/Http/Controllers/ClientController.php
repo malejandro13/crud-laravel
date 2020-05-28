@@ -96,7 +96,7 @@ class ClientController extends Controller
         }
 
         $client->save();
-        
+
         return redirect()->route('clients.index')->with('status', 'Su registro fue actualizado satisfactoriamente');
     }
 
@@ -108,6 +108,7 @@ class ClientController extends Controller
      */
     public function destroy(Client $client)
     {
-        //
+        $client->delete();
+        return redirect()->route('clients.index')->with('status', 'Su registro fue eliminado satisfactoriamente');
     }
 }

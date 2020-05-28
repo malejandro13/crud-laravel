@@ -18,6 +18,7 @@ class CreateClientsTable extends Migration
             $table->string('email', 50)->unique();
             $table->string('name', 50);
             $table->date('birthday')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

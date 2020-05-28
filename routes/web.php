@@ -29,3 +29,5 @@ Route::get('/clients/{client:email}/edit', 'ClientController@edit')->name('clien
 
 Route::patch('/clients/{client:email}', 'ClientController@update')->name('clients.update');
 
+Route::delete('/clients/{client:email}', 'ClientController@destroy')->name('clients.destroy');
+

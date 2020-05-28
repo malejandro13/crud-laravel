@@ -18,6 +18,7 @@
             <th scope="col">Birthday</th>
             <th scope="col">Ver</th>
             <th scope="col">Editar</th>
+            <th scope="col">Eliminar</th>
           </tr>
         </thead>
         <tbody>
@@ -29,6 +30,12 @@
             <td>{{ $client->birthday }}</td>
             <td><a href="{{ route('clients.show', $client) }}" class="btn btn-primary">Ver</a></td>
             <td><a href="{{ route('clients.edit', $client) }}" class="btn btn-warning">Editar</a></td>
+            <td>
+              <form action="{{ route('clients.destroy', $client) }}" method="POST">
+                @csrf @method('DELETE')
+                <button type="submit" class="btn btn-danger">Eliminar</button>
+              </form>
+            </td>
           </tr>
           @endforeach
         </tbody>
