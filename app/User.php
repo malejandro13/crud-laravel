@@ -43,4 +43,26 @@ class User extends Authenticatable
         return $this->hasMany('App\Post');
     }
 
+    public function roles()
+    {
+        return $this->belongsToMany('App\Role', 'assigned_roles');
+    }
+
+    public function hasRoles($roles)
+    {
+        $roles = is_array($roles)
+            ? $roles
+            : explode('|', $roles);
+
+        foreach ($roles as $role) {  
+            foreach ($this->roles as $roleUser){
+                if ($roleUser->name_role === $role) { 
+                    return true;
+                } 
+            }
+        }
+
+        return false;
+    }
+
 }

@@ -13,21 +13,52 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+DB::listen(function($query) {
+    echo "<pre>{$query->sql}</pre>";
+});
+
 Route::get('/', function () {
-    //dd(\App\User::find(4)->posts);
-    //dd(\App\Post::find(1)->user);
+    // UNO MUCHOS => A PARTIR DE LA INSTANCIA DE UN USUARIO
+    //$user = App\User::find(1);
 
-    /*$users = App\User::with('posts')->get();
+    //Forma 1
+    /*$user->posts()->create([
+        'title_post' => 'New Post',
+        'description_post' => 'Description New Post',
+    ]);*/
 
-    foreach ($users as $user) {
-        echo $user->email."<br>";
-        foreach ($user->posts as $post) {
-            echo $post->description_post."<br><br>";
-        }
-    }*/
-    return App\User::with('posts')->get();
+    //Forma 2
+    /*App\Post::create([
+        'title_post' => 'New Post',
+        'description_post' => 'Description New Post',
+        'user_id' => $user->id,
+    ]);*/
 
-    //return view('welcome');
+    //Forma 3
+    /*$post = App\Post::create([
+        'title_post' => 'New Post',
+        'description_post' => 'Description New Post'
+    ]);
+
+    $user->posts()->save($post);*/
+
+    // MUCHOS A MUCHOS - ROLES 
+    /*$user = App\User::find(2);
+
+    $roles = ['3', '2'];
+
+    //$user->roles()->attach($roles); // SOLO PARA CREAR
+    $user->roles()->sync($roles);
+
+    return App\User::find(2)->roles;
+
+    return "true";*/
+
+    return view('resultados', [
+        'users' => App\User::all(),
+    ]);
+
+
 });
 
 /*Route::get('/clients', 'ClientController@index')->name('clients.index');
@@ -45,4 +76,3 @@ Route::patch('/clients/{client:email}', 'ClientController@update')->name('client
 Route::delete('/clients/{client:email}', 'ClientController@destroy')->name('clients.destroy');*/
 
 Route::resource('/clients', 'ClientController');
-
