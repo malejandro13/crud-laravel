@@ -20,3 +20,9 @@ services:
       - 8000:80
     depends_on:
       - mysql
+      - redis
+  redis:
+    image: redis:5-alpine
+    container_name: redis
+    ports: 
+      - 6379:6379

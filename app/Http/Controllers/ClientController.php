@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class ClientController extends Controller
 {
@@ -14,8 +15,25 @@ class ClientController extends Controller
      */
     public function index()
     {
+        
+        $key = "clients.page.". request('page', 1); //clients.page.4
+
+        /*if(Cache::has($key)){
+            $clients = Cache::get($key);
+        } else {
+            $clients = Client::orderBy('id', 'desc')->simplePaginate(10);
+            Cache::put($key, $clients, 60);
+        }*/
+
+        $clients = Cache::tags('clients')->rememberForever($key, function() {
+            return Client::orderBy('id', 'desc')->simplePaginate(10);
+        });
+
+
+
+
         return view('client.index', [
-            'clients' => Client::simplePaginate(10),
+            'clients' => $clients,
         ]);
     }
 
@@ -45,6 +63,8 @@ class ClientController extends Controller
 
         Client::create($fields);
 
+        Cache::tags('clients')->flush();
+
         return redirect()->route('clients.index')->with('status', 'Su registro fue realizado satisfactoriamente');
     }
 
@@ -54,8 +74,14 @@ class ClientController extends Controller
      * @param  \App\Client  $client
      * @return \Illuminate\Http\Response
      */
-    public function show(Client $client)
+    public function show($id)
     {
+
+        $client = Cache::tags('clients')->rememberForever("client.{$id}", function() use($id) {
+            return Client::findOrFail($id);
+        });
+
+        
         return view('client.show', [
             'client' => $client
         ]);
@@ -67,8 +93,12 @@ class ClientController extends Controller
      * @param  \App\Client  $client
      * @return \Illuminate\Http\Response
      */
-    public function edit(Client $client)
+    public function edit($id)
     {
+        $client = Cache::tags('clients')->rememberForever("client.{$id}", function() use($id) {
+            return Client::findOrFail($id);
+        });
+
         return view('client.edit', [
             'client' => $client,
         ]);
@@ -97,6 +127,8 @@ class ClientController extends Controller
 
         $client->save();
 
+        Cache::tags('clients')->flush();
+
         return redirect()->route('clients.index')->with('status', 'Su registro fue actualizado satisfactoriamente');
     }
 
@@ -106,9 +138,16 @@ class ClientController extends Controller
      * @param  \App\Client  $client
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Client $client)
+    public function destroy($id)
     {
+        $client = Cache::rememberForever("client.{$id}", function() use($id) {
+            return Client::findOrFail($id);
+        });
+        
         $client->delete();
+
+        Cache::tags('clients')->flush();
+        
         return redirect()->route('clients.index')->with('status', 'Su registro fue eliminado satisfactoriamente');
     }
 }

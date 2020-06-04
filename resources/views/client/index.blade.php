@@ -28,10 +28,10 @@
             <td>{{ $client->email }}</td>
             <td>{{ $client->name }}</td>
             <td>{{ $client->birthday }}</td>
-            <td><a href="{{ route('clients.show', $client) }}" class="btn btn-primary">Ver</a></td>
-            <td><a href="{{ route('clients.edit', $client) }}" class="btn btn-warning">Editar</a></td>
+            <td><a href="{{ route('clients.show', $client->id) }}" class="btn btn-primary">Ver</a></td>
+            <td><a href="{{ route('clients.edit', $client->id) }}" class="btn btn-warning">Editar</a></td>
             <td>
-              <form action="{{ route('clients.destroy', $client) }}" method="POST">
+              <form action="{{ route('clients.destroy', $client->id) }}" method="POST">
                 @csrf @method('DELETE')
                 <button type="submit" class="btn btn-danger">Eliminar</button>
               </form>

@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 DB::listen(function($query) {
-    echo "<pre>{$query->sql}</pre>";
+    echo "<pre>{$query->time}</pre>";
 });
 
 Route::get('/', function () {
@@ -55,7 +55,7 @@ Route::get('/', function () {
     return "true";*/
 
     return view('resultados', [
-        'users' => App\User::all(),
+        'users' => App\User::with(['posts', 'roles'])->get(),
     ]);
 
 
