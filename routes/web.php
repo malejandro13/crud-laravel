@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Spatie\Activitylog\Models\Activity;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,8 +14,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-DB::listen(function($query) {
-    echo "<pre>{$query->sql}</pre>";
+/*DB::listen(function($query) {
+    echo "<pre>{$query->time}</pre>";
+});*/
+
+Route::get('/logs', function () {
+    return Activity::all()->last();
 });
 
 Route::get('/', function () {
