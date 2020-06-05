@@ -4,10 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Client;
 use Illuminate\Http\Request;
+use App\Interfaces\ClientInterface;
 use Illuminate\Support\Facades\Cache;
+
 
 class ClientController extends Controller
 {
+    protected $client;
+
+    public function __construct(ClientInterface $client)
+    {
+        $this->client = $client;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -15,25 +24,8 @@ class ClientController extends Controller
      */
     public function index()
     {
-        
-        $key = "clients.page.". request('page', 1); //clients.page.4
-
-        /*if(Cache::has($key)){
-            $clients = Cache::get($key);
-        } else {
-            $clients = Client::orderBy('id', 'desc')->simplePaginate(10);
-            Cache::put($key, $clients, 60);
-        }*/
-
-        $clients = Cache::tags('clients')->rememberForever($key, function() {
-            return Client::orderBy('id', 'desc')->simplePaginate(10);
-        });
-
-
-
-
         return view('client.index', [
-            'clients' => $clients,
+            'clients' => $this->client->getPaginated(),
         ]);
     }
 
@@ -61,9 +53,7 @@ class ClientController extends Controller
             'birthday' => 'required|date|before:tomorrow',
         ]);
 
-        Client::create($fields);
-
-        Cache::tags('clients')->flush();
+        $this->client->store($fields);
 
         return redirect()->route('clients.index')->with('status', 'Su registro fue realizado satisfactoriamente');
     }
@@ -76,14 +66,8 @@ class ClientController extends Controller
      */
     public function show($id)
     {
-
-        $client = Cache::tags('clients')->rememberForever("client.{$id}", function() use($id) {
-            return Client::findOrFail($id);
-        });
-
-        
         return view('client.show', [
-            'client' => $client
+            'client' => $this->client->findById($id)
         ]);
     }
 
@@ -95,12 +79,8 @@ class ClientController extends Controller
      */
     public function edit($id)
     {
-        $client = Cache::tags('clients')->rememberForever("client.{$id}", function() use($id) {
-            return Client::findOrFail($id);
-        });
-
         return view('client.edit', [
-            'client' => $client,
+            'client' => $this->client->findById($id),
         ]);
     }
 
@@ -111,23 +91,15 @@ class ClientController extends Controller
      * @param  \App\Client  $client
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Client $client)
+    public function update(Request $request, $id)
     {
         $fields = $request->validate([
-            'email' => 'required|email|max:50|confirmed|unique:clients,email,'.$client->id,
+            'email' => 'required|email|max:50|confirmed|unique:clients,email,'.$id,
             'name' => 'required|string|max:50',
             'birthday' => 'required|date|before:tomorrow',
         ]);
 
-        $client->fill($fields);
-
-        if($client->isClean()) {
-            return redirect()->route('clients.index')->with('status', 'Su registro no fue necesario actualizarlo');
-        }
-
-        $client->save();
-
-        Cache::tags('clients')->flush();
+        $this->client->update($fields, $id);    
 
         return redirect()->route('clients.index')->with('status', 'Su registro fue actualizado satisfactoriamente');
     }
@@ -140,14 +112,8 @@ class ClientController extends Controller
      */
     public function destroy($id)
     {
-        $client = Cache::rememberForever("client.{$id}", function() use($id) {
-            return Client::findOrFail($id);
-        });
-        
-        $client->delete();
+        $this->client->destroy($id);
 
-        Cache::tags('clients')->flush();
-        
         return redirect()->route('clients.index')->with('status', 'Su registro fue eliminado satisfactoriamente');
     }
 }

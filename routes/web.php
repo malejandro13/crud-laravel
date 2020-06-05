@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 DB::listen(function($query) {
-    echo "<pre>{$query->time}</pre>";
+    echo "<pre>{$query->sql}</pre>";
 });
 
 Route::get('/', function () {

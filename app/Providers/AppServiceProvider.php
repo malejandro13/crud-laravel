@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Interfaces\ClientInterface;
 use Illuminate\Support\ServiceProvider;
+use App\Decorators\ClientCacheDecorator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +25,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        $this->app->bind(ClientInterface::class, ClientCacheDecorator::class);
     }
 }
